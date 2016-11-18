@@ -6,6 +6,7 @@ using MW5.Plugins.Enums;
 using MW5.Plugins.Interfaces;
 using MW5.Plugins.Services;
 using MW5.Shared;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace MW5.Services.Concrete
 {
@@ -72,17 +73,33 @@ namespace MW5.Services.Concrete
         public bool ChooseFolder(string initialPath, out string chosenPath)
         {
             chosenPath = string.Empty;
-            using (var dialog = new FolderBrowserDialog())
-            {
-                dialog.RootFolder = Environment.SpecialFolder.MyComputer;
-                dialog.SelectedPath = initialPath;
+            /*            using (var dialog = new FolderBrowserDialog())
+                        {
+                            dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+                            dialog.SelectedPath = initialPath;
 
-                if (dialog.ShowDialog(_parent as IWin32Window) == DialogResult.OK)
+                            if (dialog.ShowDialog(_parent as IWin32Window) == DialogResult.OK)
+                            {
+                                chosenPath = dialog.SelectedPath;
+                                return true;
+                            }
+                        }
+                        */
+
+            // Look into: http://csharphelper.com/blog/2014/02/use-a-standard-windows-dialog-to-let-the-user-select-a-folder-in-c/
+            //------- sshopin
+            using (var dialog = new CommonOpenFileDialog { IsFolderPicker = true })
+            {
+                dialog.InitialDirectory = initialPath;
+
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    chosenPath = dialog.SelectedPath;
+                    chosenPath = dialog.FileName;
                     return true;
                 }
-            }
+            };
+            // sshopin
+
             return false;
         }
 
