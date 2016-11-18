@@ -87,7 +87,9 @@ namespace MW5.Data.Repository
 
         private void EnumerateFolders(string root, RepositoryItemCollection items)
         {
-            foreach (var path in Directory.EnumerateDirectories(root))
+            var dirs = from d in Directory.EnumerateDirectories(root) orderby d select d;
+
+            foreach (var path in dirs)
             {
                 var info = new DirectoryInfo(path);
 
@@ -101,7 +103,8 @@ namespace MW5.Data.Repository
         private void EnumerateFiles(string root, RepositoryItemCollection items)
         {
             var pattern = new Regex(GetSearchRegex(FormatType.All), RegexOptions.IgnoreCase);
-            var files = Directory.EnumerateFiles(root).Where(f => pattern.IsMatch(f));
+            var files0 = Directory.EnumerateFiles(root).Where(f => pattern.IsMatch(f));
+            var files = from s in files0 orderby s select s;                
 
             foreach (var f in files)
             {
