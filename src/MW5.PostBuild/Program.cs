@@ -43,7 +43,7 @@ namespace MW5.PostBuild
                 var s = File.ReadAllText(path);
                 if (!string.IsNullOrWhiteSpace(s))
                 {
-                    var regex = new Regex(oldFilename, RegexOptions.IgnoreCase);
+                    var regex = new System.Text.RegularExpressions.Regex(oldFilename, RegexOptions.IgnoreCase);
                     var newText = regex.Replace(s, newFilename);
 
                     File.WriteAllText(path, newText);
