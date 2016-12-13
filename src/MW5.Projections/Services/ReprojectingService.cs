@@ -45,6 +45,14 @@ namespace MW5.Projections.Services
                 case LayerType.Image:
                     newLayer = Reproject(layer as BitmapSource, projection, newFilename);
                     break;
+                case LayerType.VectorLayer:
+                    int count = 0;                                        
+                    IFeatureSet fs = (layer as VectorLayer).Data.Reproject(projection, out count);                    
+                    if (count > 0 && (fs != null))
+                    {
+                        newLayer = fs;
+                    }
+                    break;
             }
             return newLayer != null ? TestingResult.Ok : TestingResult.Error;
         }
