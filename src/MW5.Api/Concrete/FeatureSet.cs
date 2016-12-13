@@ -64,7 +64,8 @@ namespace MW5.Api.Concrete
         /// <summary>
         /// Creates a new instance of FeatureSet by injecting already opened Shapefile.
         /// </summary>
-        internal FeatureSet(Shapefile sf)
+        //internal FeatureSet(Shapefile sf)
+        public FeatureSet(Shapefile sf)
         {
             if (sf == null)
             {
