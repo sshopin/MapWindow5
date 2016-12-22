@@ -31,7 +31,8 @@ namespace MW5.Api.Concrete
         /// Initializes a new instance of the <see cref="Geometry"/> class from shape.
         /// </summary>
         /// <param name="shape">The shape.</param>
-        internal Geometry(Shape shape)
+        //internal Geometry(Shape shape)
+        public Geometry(Shape shape)
         {
             _shape = shape;
             _partIndex = -1;
