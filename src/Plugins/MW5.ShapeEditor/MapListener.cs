@@ -115,11 +115,15 @@ namespace MW5.Plugins.ShapeEditor
                 if (fs != null)
                 {
                     var layer = _context.Layers.ItemByHandle(e.LayerHandle);
-                    var model = new AttributeViewModel(layer, e.ShapeIndex);
 
-                    if (_context.Container.Run<AttributePresenter, AttributeViewModel>(model))
+                    if (layer.FeatureSet.Table.Fields.Count > 0)
                     {
-                        
+                        var model = new AttributeViewModel(layer, e.ShapeIndex);
+
+                        if (_context.Container.Run<AttributePresenter, AttributeViewModel>(model))
+                        {
+
+                        }
                     }
                 }
             }
