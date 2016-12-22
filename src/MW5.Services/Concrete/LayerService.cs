@@ -421,6 +421,7 @@ namespace MW5.Services.Concrete
                     break;
                 case TestingResult.SkipFile:
                 case TestingResult.Error:
+                    MessageService.Current.Info("Unable to reproject layer: " + layer.Name);                    
                     return null;
                 case TestingResult.CancelOperation:
                     abort = true;
