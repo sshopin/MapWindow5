@@ -168,3 +168,5 @@ src/Plugins/MW5.TemplateNtk/ClassDiagram1.cd
 src/Plugins/MW5.TemplateNtk/
 src/Plugins/MW5.TopoGISPlugin/
 mwtiles.db3
+Plugins/Syncfusion.Shared.Base.xml
+Plugins/Syncfusion.Tools.Windows.xml
