@@ -3,7 +3,9 @@
     public interface ILayerEditingService
     {
         void ToggleVectorLayerEditing();
-        bool SaveLayerChanges(int layerHandle);
+        bool SaveLayerChanges(int layerHandle);        
         void CreateLayer();
+
+        void IgnoreSavingOfInMemoryShapes(bool bFlag);
     }
 }

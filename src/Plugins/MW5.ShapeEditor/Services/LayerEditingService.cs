@@ -13,6 +13,7 @@ using MW5.Plugins.Services;
 using MW5.Services.Views;
 using MW5.Shared;
 using MW5.UI.Helpers;
+using System.IO;
 
 namespace MW5.Plugins.ShapeEditor.Services
 {
@@ -23,9 +24,18 @@ namespace MW5.Plugins.ShapeEditor.Services
         private readonly IFileDialogService _dialogService;
         private readonly IBroadcasterService _broadcaster;
 
+        private bool bIgnoreSavingOfInMemoryShapes;
+
+        public void IgnoreSavingOfInMemoryShapes(bool bFlag)
+        {
+            bIgnoreSavingOfInMemoryShapes = bFlag;
+        }
+
         public LayerEditingService(IAppContext context, ILayerService layerService, IFileDialogService dialogService,
                                    IBroadcasterService _broadcaster)
         {
+            bIgnoreSavingOfInMemoryShapes = false;
+
             if (context == null) throw new ArgumentNullException("context");
             if (layerService == null) throw new ArgumentNullException("layerService");
             if (dialogService == null) throw new ArgumentNullException("dialogService");
@@ -103,6 +113,10 @@ namespace MW5.Plugins.ShapeEditor.Services
                     _context.Map.MapCursor = MapCursor.ZoomIn;
                 }
             }
+            else
+            {
+                MessageService.Current.Info("Error on saving layer");
+            }
 
             return success;
         }
@@ -143,7 +157,7 @@ namespace MW5.Plugins.ShapeEditor.Services
             if (success)
             {
                 CloseEditing(layerHandle);
-            }
+            }            
 
             return success;
         }
@@ -154,13 +168,39 @@ namespace MW5.Plugins.ShapeEditor.Services
 
             if (fs.SourceType == FeatureSourceType.InMemory)
             {
-                string filename = layer.Name;
-                if (_dialogService.SaveFile(FeatureSet.OpenDialogFilter, ref filename))
+                if (bIgnoreSavingOfInMemoryShapes == false)
                 {
-                    return fs.SaveAsEx(filename, true);
+                    string filename = layer.Name;
+                    if (_dialogService.SaveFile(FeatureSet.OpenDialogFilter, ref filename))
+                    {
+                        if (File.Exists(filename))
+                        {
+                            String fname = filename;
+                            if (fname.IndexOf(".shp") != -1)
+                            {
+                                fname = fname.Remove(fname.Length - 4, 4);
+                            }
+
+                            File.Delete(fname + ".dbf");
+                            File.Delete(fname + ".shx");
+                            File.Delete(fname + ".prj");
+                            File.Delete(fname + ".shp");
+
+                            return fs.SaveAsEx(filename, true);
+                        }
+                        else
+                        {
+                            return fs.SaveAsEx(filename, true);
+                        }
+                    }
+
+                    return false;
+                }
+                else
+                {
+                    return true;
                 }
 
-                return false;
             }
 
             return fs.StopEditingShapes();
@@ -226,7 +266,7 @@ namespace MW5.Plugins.ShapeEditor.Services
         /// <summary>
         /// Closes editing session for layer (changes should be saved or discarded prior to this call).
         /// </summary>
-        private void CloseEditing(int layerHandle)
+        public void CloseEditing(int layerHandle)
         {
             var sf = _context.Layers.GetFeatureSet(layerHandle);
             sf.InteractiveEditing = false;
