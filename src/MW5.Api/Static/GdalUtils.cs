@@ -76,6 +76,8 @@ namespace MW5.Api.Static
         public bool WarpRaster(string srcFilename, string dstFilename, ISpatialReference newProjection)
         {
             string options = string.Format("-t_srs \"{0}\"", newProjection.ExportToProj4());
+            options += " -r lanczos -co COMPRESS=LZW -co predictor=2 -co TILED=yes"; // TODO: вынести в диалог
+
             return _utils.GDALWarp(srcFilename, dstFilename, options);
         }
 
